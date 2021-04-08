@@ -1,0 +1,41 @@
+1.
+select C.CustomerId, C.FirstName, C.Phone, C.Company, C.Email from Customer as C
+INNER JOIN Invoice as I ON C.CustomerId = I.InvoiceId
+INNER JOIN InvoiceLine as Inv ON I.CustomerId = Inv.InvoiceLineId
+INNER JOIN Track as T ON Inv.TrackId = T.TrackId
+INNER JOIN Genre as G ON G.GenreId = T.GenreId and G.GenreId <> 1
+INNER JOIN Employee as E ON E.EmployeeId = C.SupportRepId where BirthDate >= DATE ('now','-50 years')
+ORDER BY C.FirstName, C.Email DESC
+LIMIT 10
+
+2.
+select c.FirstName || ' ' || c.LastName "Customer Full Name", c.Phone "Customer Phone", e.FirstName || ' ' || e.LastName "Employee Full Name", e.Phone "Employee Phone" FROM Customer as c
+INNER JOIN Employee as e ON c.SupportRepId = e.EmployeeId
+
+3.
+select inv.total, c.FirstName "Customer name", c.Phone from Invoice inv
+inner join Customer c on inv.CustomerId = c.CustomerId
+order by total desc
+
+4.
+select FirstName || ' ' || LastName "Full name", phone, city from Customer as C where city in
+(select city from Customer
+group by City
+having count(*) > 1)
+
+5.
+select BillingCity "City", sum(total) "Sum" from Invoice
+group by BillingCity
+order by sum(total) desc
+limit 3
+
+6.
+select T.Name "Song Name", G.Name "Genre", A.Title "Album name", ART.Name "Artist" from Customer as C
+inner join Invoice as Inv ON C.CustomerId = Inv.CustomerId
+inner join InvoiceLine as InvLine ON Inv.InvoiceId = InvLine.InvoiceId
+inner join Track as T ON InvLine.TrackId = T.TrackId
+inner join Genre as G ON T.GenreId = G.GenreId
+inner join Album as A ON T.AlbumId = A.AlbumId
+inner join Artist as ART ON A.ArtistId = ART.ArtistId
+where T.GenreId = 1
+order by T.GenreId
